@@ -66,7 +66,7 @@ function loadDefaults() {
             name: 'Xe ra sân bay lượt đi',
             payerId: 'member_quan',
             amount: 330000,
-            participantIds: [...memberIds]
+            participantIds: ['member_quan', 'member_binh', 'member_dat', 'member_duy', 'member_thuy']
         },
         {
             id: generateId(),
