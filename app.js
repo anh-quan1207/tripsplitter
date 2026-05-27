@@ -157,7 +157,7 @@ function loadDefaults() {
             name: 'Xe sân bay về',
             payerId: 'member_quan',
             amount: 300000,
-            participantIds: [...memberIds]
+            participantIds: ['member_quan', 'member_binh', 'member_dat', 'member_duy', 'member_thuy']
         },
         {
             id: generateId(),
