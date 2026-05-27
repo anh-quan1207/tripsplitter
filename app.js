@@ -163,7 +163,7 @@ function loadDefaults() {
             id: generateId(),
             name: 'Tiền mặt trả tiền taxi, nước,.....',
             payerId: 'member_quan',
-            amount: 300000,
+            amount: 100000,
             participantIds: [...memberIds]
         },
         {
