@@ -179,6 +179,13 @@ function loadDefaults() {
             payerId: 'member_quan',
             amount: 4300000,
             participantIds: [...memberIds]
+        },
+        {
+            id: generateId(),
+            name: 'Tiền taxi đi lại',
+            payerId: 'member_binh',
+            amount: 230000,
+            participantIds: ['member_binh', 'member_quan', 'member_duy', 'member_thuy']
         }
     ];
     saveToStorage();
