@@ -186,6 +186,13 @@ function loadDefaults() {
             payerId: 'member_binh',
             amount: 230000,
             participantIds: ['member_binh', 'member_quan', 'member_duy', 'member_thuy']
+        },
+        {
+            id: generateId(),
+            name: 'Đồ ăn vặt tối',
+            payerId: 'member_dat',
+            amount: 220000,
+            participantIds: ['member_dat', 'member_nam', 'member_duy', 'member_thuy', 'member_vinh']
         }
     ];
     saveToStorage();
