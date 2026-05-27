@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripSplitter - Chia Tiền Chuyến Đi Dễ Dàng & Rõ Ràng</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo">
+                    <i class="fa-solid fa-plane-departure"></i>
+                </div>
+                <div>
+                    <h1>TripSplitter</h1>
+                    <p>Chia tiền chuyến đi cực chuẩn</p>
+                </div>
+            </div>
+
+            <!-- Dashboard Stats -->
+            <div class="stats-card">
+                <div class="stat-item">
+                    <span class="stat-label">Tổng Chi Phí</span>
+                    <span class="stat-value" id="total-trip-cost">0 đ</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-label">Bình Quân / Người</span>
+                    <span class="stat-value" id="avg-cost">0 đ</span>
+                </div>
+            </div>
+
+            <!-- Members Section -->
+            <div class="section-title">
+                <h2><i class="fa-solid fa-users"></i> Thành Viên (<span id="member-count">0</span>)</h2>
+            </div>
+            
+            <div class="member-input-group">
+                <input type="text" id="member-name-input" placeholder="Nhập tên người tham gia...">
+                <button id="add-member-btn" class="btn-primary-square"><i class="fa-solid fa-plus"></i></button>
+            </div>
+
+            <div class="member-list" id="member-list-container">
+                <!-- Dynamic members list will go here -->
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top bar -->
+            <header class="topbar">
+                <div class="welcome-text">
+                    <h2>Chuyến đi chơi của chúng mình 👋</h2>
+                    <p>Hãy thêm các thành viên và khoản chi tiêu để tự động tính toán số tiền cần chia.</p>
+                </div>
+                <div class="actions-group">
+                    <button id="reset-btn" class="btn-outline-danger"><i class="fa-solid fa-rotate-left"></i> Đặt Lại Dữ Liệu Gốc</button>
+                    <button id="show-note-btn" class="btn-success" style="font-weight: 700; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35); padding: 0.75rem 1.5rem;"><i class="fa-solid fa-note-sticky"></i> Xem Ghi Chú Chuyển Tiền</button>
+                </div>
+            </header>
+
+            <div class="content-grid">
+                <!-- Left column: Add Expense & Expenses Table -->
+                <div class="left-col">
+                    <!-- Form card -->
+                    <div class="card glass">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-receipt icon-primary"></i> Thêm Khoản Chi Tiêu Mới</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="expense-form">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="expense-name">Tên khoản chi <span class="required">*</span></label>
+                                        <input type="text" id="expense-name" placeholder="Ví dụ: Ăn trưa hải sản, Vé tham quan..." required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="expense-amount">Số tiền chi (VNĐ) <span class="required">*</span></label>
+                                        <input type="text" id="expense-amount" placeholder="Ví dụ: 1,500,000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="expense-payer">Người chi <span class="required">*</span></label>
+                                        <select id="expense-payer" required>
+                                            <option value="" disabled selected>Chọn người trả tiền...</option>
+                                            <!-- Dynamic options -->
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mt-4">
+                                    <div class="flex-between">
+                                        <label>Những người tham gia chia khoản chi này: <span class="required">*</span></label>
+                                        <div class="checkbox-actions">
+                                            <button type="button" id="select-all-members-btn" class="btn-text">Chọn tất cả</button>
+                                            <span class="bullet">•</span>
+                                            <button type="button" id="deselect-all-members-btn" class="btn-text">Bỏ chọn tất cả</button>
+                                        </div>
+                                    </div>
+                                    <div class="participants-checkboxes-grid" id="participants-grid">
+                                        <!-- Dynamic member checkboxes -->
+                                        <p class="empty-state-text">Vui lòng thêm thành viên trước để chọn chia tiền.</p>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions mt-4">
+                                    <button type="submit" class="btn-primary" id="save-expense-btn"><i class="fa-solid fa-save"></i> Lưu Khoản Chi</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Expense Table Card -->
+                    <div class="card mt-4">
+                        <div class="card-header flex-between">
+                            <h3><i class="fa-solid fa-list icon-primary"></i> Nhật Ký Chi Tiêu</h3>
+                            <button id="export-excel-btn" class="btn-success-sm"><i class="fa-regular fa-file-excel"></i> Xuất Excel Chi Tiết</button>
+                        </div>
+                        <div class="table-container">
+                            <table class="custom-table" id="expenses-table">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Khoản Chi</th>
+                                        <th>Người Chi</th>
+                                        <th class="text-right">Số Tiền</th>
+                                        <th class="text-center">Số Người</th>
+                                        <th class="text-right">Tiền/Người</th>
+                                        <th>Thành Viên Tham Gia</th>
+                                        <th class="text-center">Thao Tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expenses-table-body">
+                                    <!-- Dynamic rows -->
+                                    <tr>
+                                        <td colspan="8" class="table-empty-state">
+                                            <i class="fa-regular fa-folder-open"></i>
+                                            <p>Chưa có khoản chi tiêu nào. Hãy thêm khoản chi ở trên!</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right column: Settlement suggestions -->
+                <div class="right-col">
+                    <div class="card accent-card sticky-card">
+                        <div class="card-header flex-between">
+                            <h3><i class="fa-solid fa-hand-holding-dollar icon-accent"></i> Phương Án Thanh Toán</h3>
+                            <button id="copy-settlement-btn" class="btn-outline-primary-sm" title="Sao chép phương án chuyển tiền"><i class="fa-regular fa-copy"></i> Sao Chép</button>
+                        </div>
+                        <div class="card-body">
+                            <p class="settlement-intro">Hệ thống đã tính toán phương thức chuyển tiền tối ưu nhất để giảm thiểu số lượng giao dịch giữa các thành viên:</p>
+                            
+                            <div class="settlement-list" id="settlement-list-container">
+                                <!-- Dynamic settlement steps will go here -->
+                                <div class="empty-settlement">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    <p>Mọi khoản chi tiêu đều cân bằng. Không có giao dịch cần thực hiện!</p>
+                                </div>
+                            </div>
+
+                            <div class="settlement-toast" id="copy-toast">
+                                <i class="fa-solid fa-circle-check"></i> Đã sao chép vào bộ nhớ tạm!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Settlement Note Modal Overlay -->
+    <div id="note-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-card glass">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-note-sticky icon-success"></i> GHI CHÚ CHUYỂN TIỀN DU LỊCH</h3>
+                <button id="close-modal-btn" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="prepaid-banner">
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                    <span><strong>Mỗi thành viên đã đóng quỹ:</strong> 6.000.000 đ (Tổng quỹ: 42.000.000 đ)</span>
+                </div>
+                
+                <div class="modal-explanation">
+                    <p>💡 <strong>Thông báo về việc chuyển tiền:</strong> Do <strong>Quân</strong> đã ứng trước toàn bộ chi phí chuyến đi (tổng cộng <strong>54.809.000 đ</strong>), nên tất cả các khoản chuyển tiền sẽ được thực hiện trực tiếp cho <strong>Quân</strong> để cân bằng tài chính nhóm.</p>
+                    <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;"><em>* Lưu ý: Hãy bàn giao lại toàn bộ 42.000.000 đ tiền quỹ đóng trước cho Quân (nếu hiện tại người khác đang nắm giữ tài khoản quỹ chung này).</em></p>
+                </div>
+                
+                <div class="note-cards-container" id="modal-note-cards">
+                    <!-- Note cards for each person will be generated here -->
+                </div>
+                
+                <div class="copy-section">
+                    <h4><i class="fa-solid fa-paste"></i> Nội dung gửi Zalo / Messenger nhanh:</h4>
+                    <textarea id="copy-note-text" readonly></textarea>
+                    <button id="copy-note-btn" class="btn-success w-100" style="padding: 0.75rem;"><i class="fa-regular fa-copy"></i> Sao Chép Ghi Chú Gửi Nhóm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
