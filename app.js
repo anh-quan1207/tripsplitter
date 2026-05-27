@@ -86,7 +86,7 @@ function loadDefaults() {
             id: generateId(),
             name: 'Ăn cơm trưa Bếp Vừng',
             payerId: 'member_quan',
-            amount: 1064000,
+            amount: 864000,
             participantIds: [...memberIds]
         },
         {
@@ -163,7 +163,7 @@ function loadDefaults() {
             id: generateId(),
             name: 'Tiền mặt trả tiền taxi, nước,.....',
             payerId: 'member_quan',
-            amount: 100000,
+            amount: 300000,
             participantIds: [...memberIds]
         },
         {
